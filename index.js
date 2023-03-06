@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const port = process.env.PORT || 5000;
 
 // Config Cors
@@ -22,8 +22,6 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
-console.log(uri);
-
 // All the API'S
 
 async function run() {
@@ -31,6 +29,7 @@ async function run() {
     // Create Collections
     const vacationCollection = client.db("Travel").collection("vacations");
     const blogCollection = client.db("Travel").collection("blogs");
+    const usersCollection = client.db("Travel").collection("users");
 
     // Get API to Load All the Vacations
     app.get("/vacations", async (req, res) => {
@@ -47,6 +46,38 @@ async function run() {
       const blogs = await cursor.toArray();
       res.send(blogs);
     });
+
+    // Save User
+    app.post("/users", async (req, res) => {
+      const users = req.body;
+      const result = await usersCollection.insertOne(users);
+      res.send(result);
+    });
+
+    // Get All User API
+    app.get("/users", async (req, res) => {
+      const query = {};
+      const cursor = usersCollection.find(query);
+      const users = await cursor.toArray();
+      res.send(users);
+    });
+
+    // Get Specific User
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      let query =  {email: email};
+      const user = await usersCollection.findOne(query);
+      res.send(user);
+    });
+
+    // Get Single Vacation
+    app.get("/vacation/:id", async (req, res) =>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)}
+      const vacation = await vacationCollection.findOne(query)
+      res.send(vacation)
+    })
+
   } finally {
   }
 }
