@@ -28,8 +28,25 @@ async function run() {
   try {
     // Create Collections
     const vacationCollection = client.db("Travel").collection("vacations");
+    const discountCollection = client.db("Travel").collection("discounts");
     const blogCollection = client.db("Travel").collection("blogs");
     const usersCollection = client.db("Travel").collection("users");
+
+    // Get API to Load All the Discounts
+    app.get("/discounts", async (req, res) => {
+      const query = {};
+      const cursor = discountCollection.find(query);
+      const vacations = await cursor.toArray();
+      res.send(vacations);
+    });
+
+    // Get Single Discounts
+    app.get("/discount/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const vacation = await discountCollection.findOne(query);
+      res.send(vacation);
+    });
 
     // Get API to Load All the Vacations
     app.get("/vacations", async (req, res) => {
@@ -37,6 +54,14 @@ async function run() {
       const cursor = vacationCollection.find(query);
       const vacations = await cursor.toArray();
       res.send(vacations);
+    });
+
+    // Get Single Vacation
+    app.get("/vacation/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const vacation = await vacationCollection.findOne(query);
+      res.send(vacation);
     });
 
     // Get API to Load All the Blogs
@@ -65,19 +90,10 @@ async function run() {
     // Get Specific User
     app.get("/user/:email", async (req, res) => {
       const email = req.params.email;
-      let query =  {email: email};
+      let query = { email: email };
       const user = await usersCollection.findOne(query);
       res.send(user);
     });
-
-    // Get Single Vacation
-    app.get("/vacation/:id", async (req, res) =>{
-      const id = req.params.id;
-      const query = {_id: ObjectId(id)}
-      const vacation = await vacationCollection.findOne(query)
-      res.send(vacation)
-    })
-
   } finally {
   }
 }
