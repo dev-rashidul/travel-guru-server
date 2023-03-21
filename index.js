@@ -103,12 +103,17 @@ async function run() {
       res.send(result);
     });
 
-    // Get All Bookings API
+    // Get Specific User Bookings
     app.get("/bookings", async (req, res) => {
-      const query = {};
+      let query = {};
+      if (req.query.user_email) {
+        query = {
+          user_email: req.query.user_email,
+        };
+      }
       const cursor = bookingCollection.find(query);
-      const bookings = await cursor.toArray();
-      res.send(bookings);
+      const result = await cursor.toArray();
+      res.send(result);
     });
   } finally {
   }
