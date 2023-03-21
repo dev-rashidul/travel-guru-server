@@ -31,6 +31,7 @@ async function run() {
     const discountCollection = client.db("Travel").collection("discounts");
     const blogCollection = client.db("Travel").collection("blogs");
     const usersCollection = client.db("Travel").collection("users");
+    const bookingCollection = client.db("Travel").collection("bookings");
 
     // Get API to Load All the Discounts
     app.get("/discounts", async (req, res) => {
@@ -93,6 +94,21 @@ async function run() {
       let query = { email: email };
       const user = await usersCollection.findOne(query);
       res.send(user);
+    });
+
+    // Post Bookings API to add Review
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingCollection.insertOne(booking);
+      res.send(result);
+    });
+
+    // Get All Bookings API
+    app.get("/bookings", async (req, res) => {
+      const query = {};
+      const cursor = bookingCollection.find(query);
+      const bookings = await cursor.toArray();
+      res.send(bookings);
     });
   } finally {
   }
