@@ -104,7 +104,7 @@ async function run() {
     });
 
     // Get Specific User Bookings
-    app.get("/bookings", async (req, res) => {
+    app.get("/bookings/:email", async (req, res) => {
       let query = {};
       if (req.query.user_email) {
         query = {
@@ -130,3 +130,4 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Travel Guru Server is runnig on port : ${port}`);
 });
+
