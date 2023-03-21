@@ -104,11 +104,13 @@ async function run() {
     });
 
     // Get Specific User Bookings
-    app.get("/bookings/:email", async (req, res) => {
-      const email = req.params.user_email;
-      let query = {
-        user_email: email,
-      };
+    app.get("/dashboard/my-bookings", async (req, res) => {
+      let query = {};
+      if (req.query.booking_email) {
+        query = {
+          booking_email: req.query.booking_email,
+        };
+      }
       const cursor = bookingCollection.find(query);
       const result = await cursor.toArray();
       res.send(result);
